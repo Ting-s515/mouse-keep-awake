@@ -1,0 +1,14 @@
+FROM python:3.10-slim
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y libx11-6 libxtst6 xvfb \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt requirements-test.txt ./
+RUN python -m pip install --no-cache-dir -r requirements.txt -r requirements-test.txt
+
+COPY . .
+
+CMD ["sh", "-c", "Xvfb :99 -screen 0 800x600x24 -nolisten tcp & xvfb_pid=$!; trap 'kill $xvfb_pid 2>/dev/null || true' EXIT; export DISPLAY=:99; for attempt in $(seq 1 50); do [ -S /tmp/.X11-unix/X99 ] && break; sleep 0.1; done; [ -S /tmp/.X11-unix/X99 ] || exit 1; python -m unittest discover -s tests -p 'test_*.py' -v"]
