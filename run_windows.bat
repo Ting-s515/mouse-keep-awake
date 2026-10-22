@@ -1,12 +1,1 @@
-@echo off
-chcp 65001 >nul
-setlocal
-cd /d "%~dp0"
-where py >nul 2>&1
-if errorlevel 1 (
-    echo 找不到 Python Launcher，請先安裝 Python 3。
-    pause
-    exit /b 1
-)
-py -3 mouse_keep_awake.py %*
-pause
+@echo off & setlocal & cd /d "%~dp0" & where.exe py >nul 2>&1 & if not errorlevel 1 py -3 -c "import sys; raise SystemExit(sys.version_info < (3, 10))" >nul 2>&1 & if not errorlevel 1 (py -3 mouse_keep_awake.py %* & pause & exit /b) & where.exe python >nul 2>&1 & if errorlevel 1 (echo 需要 Python 3.10 或更新版本，請安裝 Python 或確認 py/python 指令已加入 PATH。 & pause & exit /b 1) & python -c "import sys; raise SystemExit(sys.version_info < (3, 10))" >nul 2>&1 & if errorlevel 1 (echo 需要 Python 3.10 或更新版本，請安裝 Python 或確認 py/python 指令已加入 PATH。 & pause & exit /b 1) & python mouse_keep_awake.py %* & pause
