@@ -27,14 +27,18 @@ Wayland 會透過桌面 portal 要求鼠標控制及螢幕座標串流授權。�
 
 ## 測試
 
-測試分成兩部分：假後端單元測試驗證重置、間隔、方向與 log；Testcontainers 會建立 Linux 容器並以 Xvfb 提供虛擬 X11 桌面，確認 X11 後端實際送出鼠標移動事件。
+測試分成一般單元測試與 Linux/X11 整合測試。一般單元測試使用假後端驗證重置、間隔、方向與 log，不需要安裝額外套件；Linux/X11 整合測試由 Testcontainers 建立 Linux 容器，並以 Xvfb 提供虛擬 X11 桌面確認實際鼠標事件。
 
-需要 Docker Desktop 或其他可用的 Docker Engine，以及 Python 3.10 或更新版本。於工具目錄執行：
+Windows 執行一般單元測試：
 
-    python -m pip install -r requirements-test.txt
-    python tests/run_testcontainers.py
+    py -3 -m unittest discover -s tests -p "test_*.py" -v
 
-容器測試只驗證 Linux X11 路徑；Windows、macOS 與 Wayland 的原生桌面互動仍需在對應桌面工作階段驗證。
+Linux/X11 整合測試需要 Docker Desktop 或其他可用的 Docker Engine，以及 Python 3.10 或更新版本。於工具目錄執行：
+
+    py -3 -m pip install -r requirements-test.txt
+    py -3 tests/run_testcontainers.py
+
+`requirements-test.txt` 安裝主機端的 Testcontainers 執行器；`python-xlib` 僅由容器從 `requirements-integration.txt` 安裝。容器測試只驗證 Linux X11 路徑；Windows、macOS 與 Wayland 的原生桌面互動仍需在對應桌面工作階段驗證。
 
 ## 平台說明
 
